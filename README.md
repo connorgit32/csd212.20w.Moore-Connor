@@ -12,3 +12,4 @@ This repository contains lab work for the Sault College course CSD212
   - Lab 8: String and Array Manipulation 
 
 **Author**: Connor Moore
+test
