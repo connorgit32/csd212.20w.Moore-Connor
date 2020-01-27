@@ -6,8 +6,8 @@
       Chapter 2
       Hands-on Project 2-2
 
-      Author: 
-      Date:   
+      Author: Connor Moore
+      Date: January 23rd, 2020  
 
       Filename: index.htm
    -->
@@ -47,5 +47,16 @@
         </fieldset>
      </form>
    </article>
+   <script>
+     function submitInfo() {
+       var name = document.getElementById("nameinput");
+       var email = document.getElementById("emailinput");
+       var phone = document.getElementById("phoneinput");
+       (name.value && email.value && phone.value) ? alert("Thank you!") : alert("Please fill in all fields");
+     }
+     
+     document.getElementById("submit").addEventListener("click", submitInfo, false);
+     
+   </script>
 </body>
 </html>
