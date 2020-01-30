@@ -6,8 +6,8 @@
       Chapter 3
       Hands-on Project 3-3
 
-      Author: 
-      Date:   
+      Author: Connor Moore
+      Date: January 30th, 2020  
 
       Filename: index.htm
    -->
@@ -37,5 +37,23 @@
           </ul>
       </div>
    </article>
+   <script>
+      var places = ["PEI", "NS", "NB", "SK", "AB"]
+
+      function processPlaces() {
+
+         for (var i = 0; i < 5; i++) {
+            listItem = "item" + (i + 1);
+            document.getElementById(listItem).innerHTML = places[i];
+         }
+      }
+
+      if (window.addEventListener) {
+         window.addEventListener("load", processPlaces, false);
+      } else if (window.attachEvent) {
+         window.attachEvent("onload", processPlaces);
+      }
+
+   </script>
 </body>
 </html>

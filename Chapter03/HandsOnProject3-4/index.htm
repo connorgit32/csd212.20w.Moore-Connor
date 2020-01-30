@@ -6,8 +6,8 @@
       Chapter 3
       Hands-on Project 3-4
 
-      Author: 
-      Date:   
+      Author: Connor Moore
+      Date: January 30th, 2020  
 
       Filename: index.htm
    -->
@@ -48,5 +48,18 @@
           </fieldset>
       </form>
    </article>
+   <script>
+      var i = 0;
+      var listItem = "";
+
+      function processInput() {
+         if (i <= 5) {
+            listItem = "item" + i
+            document.getElementById("listItem").innerHTML = document.getElementById("toolbox");
+            document.getElementById("toolbox").innerHTML = ""
+         }
+      }
+
+   </script>
 </body>
 </html>
