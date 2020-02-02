@@ -38,16 +38,18 @@
       </div>
    </article>
    <script>
+      // creates an array with 5 string items
       var places = ["PEI", "NS", "NB", "SK", "AB"]
 
       function processPlaces() {
-
+         // Increments through item 1-5 giving them a value from the array
+         // Has (i + 1) because i starting at 0
          for (var i = 0; i < 5; i++) {
             listItem = "item" + (i + 1);
             document.getElementById(listItem).innerHTML = places[i];
          }
       }
-
+      // Backward compatible event listener that runs the function when the page is loaded
       if (window.addEventListener) {
          window.addEventListener("load", processPlaces, false);
       } else if (window.attachEvent) {

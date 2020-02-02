@@ -4,7 +4,7 @@
    <!--
       JavaScript 6th Edition
       Chapter 3
-      Hands-on Project 3-4
+      Hands-on Project 3-5
 
       Author: Connor Moore
       Date: January 30th, 2020  
@@ -13,7 +13,7 @@
    -->
    <meta charset="utf-8" />
    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-   <title>Hands-on Project 3-4</title>
+   <title>Hands-on Project 3-5</title>
    <link rel="stylesheet" href="styles.css" />
    <script src="modernizr.custom.05819.js"></script>
 </head>
@@ -21,7 +21,7 @@
 <body>
    <header>
       <h1>
-         Hands-on Project 3-4
+         Hands-on Project 3-5
       </h1>
    </header>
 
@@ -49,14 +49,14 @@
       </form>
    </article>
    <script>
-
+   /*
       // Transfers input to a list through id item 1-5, variable to id.
       var i = 1;
       var listItem = "";
-      
+
       function processInput() {
          if (i <= 5) {
-            listItem = "item" + i
+            listItem = "item" + i;
             document.getElementById(listItem).innerHTML = document.getElementById("toolBox").value;
             document.getElementById("toolBox").value = ""
             if (i == 5) {
@@ -65,7 +65,28 @@
             i += 1;
          }
       }
-      // Backward compatible event listener for click
+   */
+
+      // Uses switch, case, default statements to do the same thing as above
+
+      var i = 1;
+      var listItem = "";
+
+      function processInput() {
+      switch (i <= 5){
+         case i == 5:
+            document.getElementById("resultsExpl").innerHTML = "Thank you for your suggestions.";
+         default:
+            listItem = "item" + i;
+            document.getElementById(listItem).innerHTML = document.getElementById("toolBox").value;
+            document.getElementById("toolBox").value = "";
+            i += 1;
+            break;
+         }
+      }
+
+
+      // Backward compatible eventlistner for click
       var submitButton = document.getElementById("button");
 
       if (submitButton.addEventListener) {
