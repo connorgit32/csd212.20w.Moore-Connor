@@ -86,22 +86,48 @@
             <td><button class="op add" onclick="alert('+')">+</button></td>
         </tr><tr>
             <td colspan="2"><button class="num zero" onclick="calcNumber(0)">0</button></td>
-            <td><button class="op point" onclick="alert('.')">.</button></td>
+            <td><button class="op point" onclick="calcNumber('.')" id="point">.</button></td>
             <td><button class="op equal" onclick="alert('=')">=</button></td>
         </tr>
     </table>
 
     <script>
-        
+
+
+        i = 0;
+        x = 0;
         function calcNumber(numValue) {
-            document.getElementById("display").innerHTML += numValue;
+
+      
+
+            if (document.getElementById("display").innerHTML == '.' && x == 0) {
+                document.getElementById("display").innerHTML += numValue;
+                x += 1;
+            }
+
+            // If first number is 0, it is replaced by a number. Adds 1 to i for next statement
+            else if (document.getElementById("display").innerHTML == 0) {
+                document.getElementById("display").innerHTML = numValue;
+                i += 1;
+            } 
+            
+            // Doesn't allow 0 to be input if the first number is 0. Allows for 0's after first number by incrementing i in previous statement
+            else if (document.getElementById("display").innerHTML == 0 && i == 0) {
+                document.getElementById("display").innerHTML = 0;
+            }
+
+            // Appends buttons passed function value to the previous number
+            else {
+                document.getElementById("display").innerHTML += numValue;
+           }
         }
 
         function calcClear() {
             document.getElementById("display").innerHTML = 0;
+            i = 0;
+            x = 0;
         }
 
-        
     </script>
 
 </body>
