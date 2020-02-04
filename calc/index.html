@@ -68,24 +68,24 @@
             <td><button class="op div" onclick="alert('Divide')">&divide;</button></td>
         </tr>
         <tr>
-            <td><button class="num" onclick="calcNumber(7)">7</button></td>
-            <td><button class="num" onclick="calcNumber(8)">8</button></td>
-            <td><button class="num" onclick="calcNumber(9)">9</button></td>
+            <td><button class="num" onclick="calcNumber('7')">7</button></td>
+            <td><button class="num" onclick="calcNumber('8')">8</button></td>
+            <td><button class="num" onclick="calcNumber('9')">9</button></td>
             <td><button class="op mul" onclick="alert('x')">x</button></td>
         </tr>
         <tr>
-            <td><button class="num" onclick="calcNumber(4)">4</button></td>
-            <td><button class="num" onclick="calcNumber(5)">5</button></td>
-            <td><button class="num" onclick="calcNumber(6)">6</button></td>
+            <td><button class="num" onclick="calcNumber('4')">4</button></td>
+            <td><button class="num" onclick="calcNumber('5')">5</button></td>
+            <td><button class="num" onclick="calcNumber('6')">6</button></td>
             <td><button class="op sub" onclick="alert('Subtract')">-</button></td>
         </tr>
         <tr>
-            <td><button class="num" onclick="calcNumber(1)">1</button></td>
-            <td><button class="num" onclick="calcNumber(2)">2</button></td>
-            <td><button class="num" onclick="calcNumber(3)">3</button></td>
+            <td><button class="num" onclick="calcNumber('1')">1</button></td>
+            <td><button class="num" onclick="calcNumber('2')">2</button></td>
+            <td><button class="num" onclick="calcNumber('3')">3</button></td>
             <td><button class="op add" onclick="alert('+')">+</button></td>
         </tr><tr>
-            <td colspan="2"><button class="num zero" onclick="calcNumber(0)">0</button></td>
+            <td colspan="2"><button class="num zero" onclick="calcNumber('0')">0</button></td>
             <td><button class="op point" onclick="calcNumber('.')" id="point">.</button></td>
             <td><button class="op equal" onclick="alert('=')">=</button></td>
         </tr>
@@ -93,39 +93,54 @@
 
     <script>
 
+        zeroCounter = 0;
+        pointCounter = 0;
+        firstCounter = 0;
 
-        i = 0;
-        x = 0;
         function calcNumber(numValue) {
-
       
-
-            if (document.getElementById("display").innerHTML == '.' && x == 0) {
-                document.getElementById("display").innerHTML += numValue;
-                x += 1;
+            // Handles the first value on the display
+            if (document.getElementById("display").innerHTML == '0') {
+                
+                // If first value is not a point, it replaces the 0. Increments firstCounter so only one number input for first number
+                if (numValue != '.') {
+                    document.getElementById("display").innerHTML = numValue;
+                    firstCounter += 1;
+                }
+                // If first value is a point, the point is appended to the 0 and pointCounter is incremented. Increments firstCounter so only one number input for first number
+                if (numValue == '.') {
+                    document.getElementById("display").innerHTML += numValue;
+                    pointCounter += 1;
+                    firstCounter += 1;
+                }
             }
 
-            // If first number is 0, it is replaced by a number. Adds 1 to i for next statement
-            else if (document.getElementById("display").innerHTML == 0) {
-                document.getElementById("display").innerHTML = numValue;
-                i += 1;
-            } 
+            // Handles point value not inputted as the first value
+            if (numValue == '.' && pointCounter == '0') {
+                document.getElementById("display").innerHTML += numValue;
+                pointCounter += 1;     
+            }
             
-            // Doesn't allow 0 to be input if the first number is 0. Allows for 0's after first number by incrementing i in previous statement
-            else if (document.getElementById("display").innerHTML == 0 && i == 0) {
-                document.getElementById("display").innerHTML = 0;
+            // If a point has been input anywhere in code, replace it with empty string
+            else if (numValue == '.' && pointCounter != '0') {
+                numValue == "";
             }
 
-            // Appends buttons passed function value to the previous number
-            else {
-                document.getElementById("display").innerHTML += numValue;
-           }
+            // Handles all numbers after the first value
+            else if (firstCounter != 1) {
+               document.getElementById("display").innerHTML += numValue;  
+            }
+
+            // Increments firstCounter, or else two numbers outputed for first number
+            else if (document.getElementById("display").innerHTML.length > '0') {
+                firstCounter += 1;
+           }   
         }
 
         function calcClear() {
-            document.getElementById("display").innerHTML = 0;
-            i = 0;
-            x = 0;
+            document.getElementById("display").innerHTML = '0';
+            zeroCounter = 0;
+            pointCounter = 0;
         }
 
     </script>
