@@ -61,7 +61,7 @@
 <body>
     <table>
         <tr>
-            <td colspan="4"><div id="display">0</div></td colspan="4">
+            <td colspan="4"><div id="display" class="display">0</div></td colspan="4">
         </tr>
         <tr>
             <td colspan="3"><button class="clear" id="clear" onclick="calcClear()">Clear</button></td>
@@ -116,13 +116,13 @@
             }
 
             // Handles point value not inputted as the first value
-            if (numValue == '.' && pointCounter == '0') {
+            if (numValue == '.' && pointCounter == 0) {
                 document.getElementById("display").innerHTML += numValue;
                 pointCounter += 1;     
             }
             
             // If a point has been input anywhere in code, replace it with empty string
-            else if (numValue == '.' && pointCounter != '0') {
+            else if (numValue == '.' && pointCounter != 0) {
                 numValue == "";
             }
 
@@ -132,7 +132,7 @@
             }
 
             // Increments firstCounter, or else two numbers outputed for first number
-            else if (document.getElementById("display").innerHTML.length > '0') {
+            else if (document.getElementById("display").innerHTML.length > 0) {
                 firstCounter += 1;
            }   
         }
