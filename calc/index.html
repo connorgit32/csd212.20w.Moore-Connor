@@ -59,91 +59,203 @@
     </style>
 </head>
 <body>
-    <table>
+
+    <table class="calculator">
         <tr>
-            <td colspan="4"><div id="display">0</div></td colspan="4">
+            <td colspan="4"><div id="display" class="display">0</div></td>
         </tr>
         <tr>
-            <td colspan="3"><button class="clear" id="clear" onclick="calcClear()">Clear</button></td>
-            <td><button class="op div" onclick="alert('Divide')">&divide;</button></td>
+            <td colspan="3"><button class="clear" onclick="clearDisplay()">Clear</button></td>
+            <td><button class="div op" onclick="divideButtonClicked()">÷</button></td>
         </tr>
         <tr>
-            <td><button class="num" onclick="calcNumber('7')">7</button></td>
-            <td><button class="num" onclick="calcNumber('8')">8</button></td>
-            <td><button class="num" onclick="calcNumber('9')">9</button></td>
-            <td><button class="op mul" onclick="alert('x')">x</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">7</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">8</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">9</button></td>
+            <td><button class="mul op" onclick="multiplyButtonClicked()">x</button></td>
         </tr>
         <tr>
-            <td><button class="num" onclick="calcNumber('4')">4</button></td>
-            <td><button class="num" onclick="calcNumber('5')">5</button></td>
-            <td><button class="num" onclick="calcNumber('6')">6</button></td>
-            <td><button class="op sub" onclick="alert('Subtract')">-</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">4</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">5</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">6</button></td>
+            <td><button class="sub op" onclick="subButtonClicked()">-</button></td>
         </tr>
         <tr>
-            <td><button class="num" onclick="calcNumber('1')">1</button></td>
-            <td><button class="num" onclick="calcNumber('2')">2</button></td>
-            <td><button class="num" onclick="calcNumber('3')">3</button></td>
-            <td><button class="op add" onclick="alert('+')">+</button></td>
-        </tr><tr>
-            <td colspan="2"><button class="num zero" onclick="calcNumber('0')">0</button></td>
-            <td><button class="op point" onclick="calcNumber('.')" id="point">.</button></td>
-            <td><button class="op equal" onclick="alert('=')">=</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">1</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">2</button></td>
+            <td><button class="num" onclick="numberButtonClicked(this.innerText)">3</button></td>
+            <td><button class="add op" onclick="addButtonClicked()">+</button></td>
+        </tr>
+        <tr>
+            <td colspan="2"><button class="num" onclick="numberButtonClicked(this.innerText)">0</button></td>
+            <td><button class="point" onclick="pointButtonClicked()">.</button></td>
+            <td><button class="eq" onclick="equalResults()">=</button></td>
         </tr>
     </table>
 
     <script>
 
-        zeroCounter = 0;
-        pointCounter = 0;
-        firstCounter = 0;
+        var display = document.getElementById('display');
 
-        function calcNumber(numValue) {
-      
-            // Handles the first value on the display
-            if (document.getElementById("display").innerHTML == '0') {
-                
-                // If first value is not a point, it replaces the 0. Increments firstCounter so only one number input for first number
-                if (numValue != '.') {
-                    document.getElementById("display").innerHTML = numValue;
-                    firstCounter += 1;
-                }
-                // If first value is a point, the point is appended to the 0 and pointCounter is incremented. Increments firstCounter so only one number input for first number
-                if (numValue == '.') {
-                    document.getElementById("display").innerHTML += numValue;
-                    pointCounter += 1;
-                    firstCounter += 1;
-                }
-            }
+        let isDecimal = false;
 
-            // Handles point value not inputted as the first value
-            if (numValue == '.' && pointCounter == '0') {
-                document.getElementById("display").innerHTML += numValue;
-                pointCounter += 1;     
-            }
+        let displayArray = [];
+
+        var operator;
+
+        var total = 0;
+
+        var arrayIndex = 0;
+
+        function isClear() {
+            return display.innerText === '0';
+        }
+
+        function clearDisplay() {
+            display.innerText = '0';
+
+            isDecimal = false;
+
+            displayArray = [];
+            numIndex = 0;
+        }
+
+        function numberButtonClicked(n) {
+            const currentText = display.innerText;
             
-            // If a point has been input anywhere in code, replace it with empty string
-            else if (numValue == '.' && pointCounter != '0') {
-                numValue == "";
+            if ( isClear() ) {
+                display.innerText = n;
+                displayArray[numIndex] = n;
+                numIndex+=1;
+            } else {
+                display.innerText = display.innerText + n;
+                displayArray[numIndex] = n;
+                numIndex+=1;
             }
 
-            // Handles all numbers after the first value
-            else if (firstCounter != 1) {
-               document.getElementById("display").innerHTML += numValue;  
+        }
+
+        function pointButtonClicked() {
+
+            // Prevent the user from enter multiple points
+            if ( ! isDecimal ) {
+                display.innerText = display.innerText + '.';
             }
-
-            // Increments firstCounter, or else two numbers outputed for first number
-            else if (document.getElementById("display").innerHTML.length > '0') {
-                firstCounter += 1;
-           }   
+            isDecimal = true;
         }
 
-        function calcClear() {
-            document.getElementById("display").innerHTML = '0';
-            zeroCounter = 0;
-            pointCounter = 0;
+
+
+        // First operator click stores first value in total variable, then changes operator variable.
+        // Next operators clicked uses operator variable to apply calculation to total variable.
+
+        // Tests 35, 36, 38, 39 should pass but say they don't. Don't understand some of the tests
+        // like test 40 which says 1 + 2 = should display 8. Are these supposed to fail? 
+
+        function addButtonClicked() { // All operator functions except "=" are the same. They just change the operator to whatever the operation is.
+            if (total == 0) {
+                total += parseFloat(display.innerText); // Stores the first value in the display into the variable total after an operator is pushed.
+            }
+            if (operator == '+' & display.innerText != "") { // Changes total depending on the operator. Will skip and just change operator if an operator is pushed and 
+                total += parseFloat(display.innerText); // there's nothing in the display.
+            }
+            if (operator == '-' & display.innerText != "") {                      
+                total -= parseFloat(display.innerText); 
+            }
+            if (operator == '÷' & display.innerText != "") {     
+                total /= parseFloat(display.innerText);
+            }
+            if (operator == '*' & display.innerText != "") {    
+                total *= parseFloat(display.innerText);
+            }
+            operator = '+'; // Operator changes at end so the calculation to total occurs first
+            display.innerText = ""; // Clears display
+        }
+            
+        function subButtonClicked() {
+            if (total == 0) {
+                total += parseFloat(display.innerText);
+            }
+            if (operator == '-' & display.innerText != "") {                      
+                total -= parseFloat(display.innerText); 
+            }
+            if (operator == '+' & display.innerText != "") {
+                total += parseFloat(display.innerText);
+            }
+            if (operator == '÷' & display.innerText != "") {     
+                total /= parseFloat(display.innerText);
+            }
+            if (operator == '*' & display.innerText != "") {     
+                total *= parseFloat(display.innerText);
+            }
+            operator = '-';   
+            display.innerText = "";
+        }
+        
+
+
+        function multiplyButtonClicked() { 
+            if (total == 0) {     
+                total += parseFloat(display.innerText); 
+            }
+            if (operator == '-' & display.innerText != "") {
+                total -= parseFloat(display.innerText);
+            }
+            if (operator == '+' & display.innerText != "") {     
+                total += parseFloat(display.innerText);
+            }
+            if (operator == '÷' & display.innerText != "") {     
+                total /= parseFloat(display.innerText);
+            }
+            if (operator == '*' & display.innerText != "") {     
+                total *= parseFloat(display.innerText);
+            }
+            operator = '*';
+            display.innerText = "";
         }
 
+        function divideButtonClicked() {
+            if (total == 0) { 
+                total += parseFloat(display.innerText);
+            }
+            if (operator == '-' & display.innerText != "") {
+                total -= parseFloat(display.innerText);
+            }
+            if (operator == '+' & display.innerText != "") {     
+                total += parseFloat(display.innerText);
+            }
+            if (operator == '*' & display.innerText != "") {    
+                total *= parseFloat(display.innerText);  
+            }
+            if (operator == '÷' & display.innerText != "") {     
+                total /= parseFloat(display.innerText);
+            }
+            operator = '÷'; 
+            display.innerText = "";
+        }                        
+
+        function equalResults() { // Performs the last operation to total, then displays total.
+            if (operator == '+' & display.innerText != "") {
+                total += parseFloat(display.innerText);
+                display.innerText = total;
+            }
+            else if (operator == '-' & display.innerText != "") {
+                total -= parseFloat(display.innerText);
+                display.innerText = total;
+            } 
+            else if (operator == '*' & display.innerText != "") {
+                total *= parseFloat(display.innerText);
+                display.innerText = total;
+            }
+            else if (operator == '÷' & display.innerText != "") {
+                total /= parseFloat(display.innerText);
+                display.innerText = total;
+            }
+            else { // Handles 1 + = so it equals 1.
+                display.innerText = total;
+            }
+        }
     </script>
-
+    <script src="lab4-tester.js"></script> 
 </body>
 </html>

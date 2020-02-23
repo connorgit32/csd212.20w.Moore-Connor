@@ -4,7 +4,7 @@
    <!--
       JavaScript 6th Edition
       Chapter 4
-      Hands-on Project 4-3
+      Hands-on Project 4-4
 
       Author: Connor Moore
       Date: Feburary 13th, 2020
@@ -21,7 +21,7 @@
 <body>
    <header>
       <h1>
-         Hands-on Project 4-3
+         Hands-on Project 4-4
       </h1>
    </header>
 
@@ -49,6 +49,7 @@
       </form>
    </article>
    <script>
+      "use strict";
       var places = []; // new array to store entered places
       var i = 1; // counter variable to track array indexes
 
@@ -61,8 +62,8 @@
          }
          else { // add entered value to array and write results to document
             document.getElementById("resultsExpl").innerHTML = "You entered the following places:";
-            listItem = "";
-            for (j = 1; j < 6; j++) { // write each array element to its corresponding list item
+            var listItem = "";
+            for (var j = 1; j < 6; j++) { // write each array element to its corresponding list item
                listItem = "item" + j;
                document.getElementById(listItem).innerHTML = places[j];
             }
