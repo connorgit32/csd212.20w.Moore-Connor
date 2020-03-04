@@ -1,0 +1,54 @@
+Calculator Project (39/52)
+    ✓  Shows 0 by default (148ms)
+    ✓ shows '0' after pressing Clear (167ms)
+    ✓ shows '0' after pressing 1 Clear (228ms)
+    ✓ shows '2' after pressing 1 Clear 2 (279ms)
+    ✓ shows '0' after pressing 1 Clear 2 Clear (326ms)
+    ✓ shows '1' after pressing 1 (199ms)
+    ✓ shows '12' after pressing 1 2 (207ms)
+    ✓ shows '12.' after pressing 1 2 . (312ms)
+    ✓ shows '12.01' after pressing 1 2 . 0 1 (436ms)
+    ✓ shows '0.' after pressing . (257ms)
+    ✓ shows '0.' after pressing . . (232ms)
+    ✓ shows '0.' after pressing 0 . (183ms)
+    ✓ shows '1.' after pressing 0 1 . (298ms)
+    ✓ shows '1.' after pressing 0 1 . . (389ms)
+    ✓ shows '0.1' after pressing 0 . 1 . (381ms)
+    ✓ shows '0' after pressing 0 (199ms)
+    ✓ shows '1' after pressing 0 1 (239ms)
+    ✓ shows '0' after pressing 0 0 (192ms)
+    ✓ shows '0.0' after pressing 0 . 0 (264ms)
+    ✓ shows '0.01' after pressing 0 . 0 1 (399ms)
+    ✓ shows '0.01' after pressing . 0 1 (312ms)
+    ✓ shows '0.01' after pressing 0 0 . 0 1 (420ms)
+    ✓ shows '0.010' after pressing 0 0 . 0 1 0 (508ms)
+    3) shows '1' after pressing 1 =
+    4) shows '1' after pressing 1 +
+    ✓ shows '1' after pressing 1 + = (363ms)
+    5) shows '0.' after pressing 1 + = .
+    ✓ shows '1' after pressing 1 + - = (499ms)
+    ✓ shows '2' after pressing 1 + 2 (419ms)
+    ✓ shows '3' after pressing 1 + 2 = (378ms)
+    6) shows '3' after pressing 1 + 2 = =
+    7) shows '3' after pressing 1 + 2 = +
+    8) shows '8' after pressing 1 + 2 = + 5 =
+    9) shows '4' after pressing 1 + 2 = 4
+    10) shows '9' after pressing 1 + 2 = 4 + 5 =
+    ✓ shows '30' after pressing 2 x 3 0 (420ms)
+    ✓ shows '60' after pressing 2 x 3 0 = (452ms)
+    ✓ shows '2' after pressing 3 0 ÷ 2 (370ms)
+    ✓ shows '15' after pressing 3 0 ÷ 2 = (468ms)
+    ✓ shows '5.2' after pressing 3 . 2 + 2 = (574ms)
+    11) shows '5.6' after pressing 3 . 2 + 2 . 4 =
+    ✓ shows '2' after pressing 3 - 2 (407ms)
+    ✓ shows '1' after pressing 3 - 2 = (412ms)
+    ✓ shows '-2' after pressing - 2 = (413ms)
+    12) shows '0' after pressing + - x 2 =
+    ✓ shows '6' after pressing 2 + - x 3 = (516ms)
+    ✓ shows '6' after pressing 2 + - x 3 + = (596ms)
+    ✓ shows '2' after pressing 2 + - x 3 + - 4 = (761ms)
+    ✓ shows '2.75' after pressing 5 ÷ 4 x 3 - 2 + 1 = (799ms)
+    13) shows '0 or -1' after pressing 1 + 2 - 3 x 4 ÷ 3 =
+    ✓ shows '-2.75 or -2.5' after pressing 1 + 2 x 3 ÷ 4 - 5 = (859ms)
+    ✓ shows '1 or 6.2' after pressing 1 + 2 x 3 - 4 ÷ 5 = (772ms)
+
