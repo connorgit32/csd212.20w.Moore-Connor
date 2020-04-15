@@ -1,4 +1,4 @@
-* { box-sizing: border-box; }
+* { box-sizing: content-box; }
 
 body { 
     margin: 0;
@@ -20,27 +20,13 @@ body {
 
 }
 
-#btn-start {
-    width: 100%
-}
-
-#game-info {
-    display: flex;
-    text-align: left;
-    align-items: flex-start;
-    justify-content: space-around;
-}
-
-#game-info > div {
-    display: grid;
-    grid-template-columns: 2fr 3fr;
-}
-#game-info > div > div {
+#score-container,
+#speed-container {
     color: #fff;
-    margin: 0.5em;
+    margin: 1em;
 }
 
-#settings-panel {
+#menu {
     display: none;
     position: fixed;
     z-index: 100;
@@ -56,15 +42,19 @@ body {
     background: #000c;
 }
 
-#settings-panel.open {
+#menu.open {
     display: flex;
 }
 
-#settings-panel button {
+#menu button {
     font-size: 24px;
 }
 
-#settings-panel form {
+#menu form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     min-width: 400px;
     padding: 2em;
     margin: 2em 2em;
@@ -72,28 +62,7 @@ body {
     background: white;
 }
 
-#settings-panel label {
-    text-align: left;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-#settings-panel form section {
-    display: grid;
-    grid-template-columns: 2fr 3fr;
-    align-items: center;
-
-
-    margin-top: 2em;
-    margin-bottom: 2em;
-}
-
-#settings-panel form #player-settings {
-
-}
-
-
 #gameboard { 
-    box-sizing: content-box;
     background: #c8ddae; 
     border: 10px solid #be910c;
     margin: auto;
@@ -126,99 +95,8 @@ body {
 
     transition: background-color 1s ease-in-out;
 }
-
-.snake-segment.snake-head {
-    z-index: 10;
-}
-.snake-segment.snake-head::before,
-.snake-segment.snake-head::after {
-    content: "";
-    width: 20%;
-    height: 20%;
-    background-color: black;
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid white;
-}
-.snake-segment.snake-head.snake-dir-U {
-    border-top-left-radius: 30%;
-    border-top-right-radius: 30%;
-}
-.snake-segment.snake-tail.snake-dir-U {
-    border-bottom-left-radius: 50%;
-    border-bottom-right-radius: 50%;
-}
-.snake-segment.snake-head.snake-dir-U::before {
-    top: 15%;
-    left: 33%;
-    transform: translateX(-50%);
-}
-.snake-segment.snake-head.snake-dir-U::after {
-    top: 15%;
-    left: 66%;
-    transform: translateX(-50%);
-}
-.snake-segment.snake-head.snake-dir-D {
-    border-bottom-left-radius: 30%;
-    border-bottom-right-radius: 30%;
-}
-.snake-segment.snake-tail.snake-dir-D {
-    border-top-left-radius: 50%;
-    border-top-right-radius: 50%;
-}
-.snake-segment.snake-head.snake-dir-D::before {
-    bottom: 15%;
-    left: 33%;
-    transform: translateX(-50%);
-}
-.snake-segment.snake-head.snake-dir-D::after {
-    bottom: 15%;
-    left: 66%;
-    transform: translateX(-50%);
-}
-.snake-segment.snake-head.snake-dir-L {
-    border-bottom-left-radius: 30%;
-    border-top-left-radius: 30%;
-}
-.snake-segment.snake-tail.snake-dir-L {
-    border-bottom-right-radius: 50%;
-    border-top-right-radius: 50%;
-}
-.snake-segment.snake-head.snake-dir-L::before {
-    top: 33%;
-    left: 15%;
-    transform: translateY(-50%);
-}
-.snake-segment.snake-head.snake-dir-L::after {
-    top: 66%;
-    left: 15%;
-    transform: translateY(-50%);
-}
-.snake-segment.snake-head.snake-dir-R {
-    border-bottom-right-radius: 30%;
-    border-top-right-radius: 30%;
-}
-.snake-segment.snake-tail.snake-dir-R {
-    border-bottom-left-radius: 50%;
-    border-top-left-radius: 50%;
-}
-.snake-segment.snake-head.snake-dir-R::before {
-    top: 33%;
-    right: 15%;
-    transform: translateY(-50%);
-}
-.snake-segment.snake-head.snake-dir-R::after {
-    top: 66%;
-    right: 15%;
-    transform: translateY(-50%);
-}
-
-.snake-segment.snake-dead {
-    background-color: transparent !important;
-}
-.snake-segment.snake-dead::before,
-.snake-segment.snake-dead::after {
-    display: none;
+.snake-segment.dead {
+    background-color: transparent;
 }
 
 .food {

@@ -9,13 +9,37 @@
 </head>
 <body>
     <div id="container">
-        <div id="menu" class="open">
+        <div id="settings-panel" class="open">
             <form action="">
-                <button id="btn-start">Start!</button>
+                <h1>Sssnake!</h1>
+                <section id="player-settings">
+                    <label>Caste</label>
+                    <select id="snake-caste">
+                        <option value="s">Sss'ish (default)</option>
+                        <option value="h">Hss'ish (more points per food)</option>
+                        <option value="t">Tss'ish (reduced speedup)</option>
+                        <option value="k">Kss'ish (slower growth)</option>
+                    </select>
+                </section>
+                <section id="game-settings">
+                </section>
+                    <button id="btn-start"><h1>Start!</h1></button>
             </form>
         </div>
-        <div id="score-container">Score: <span id="score"></span></div>
-        <div id="speed-container">Speed: <span id="speed"></span></div>
+        <div id="game-info">
+            <div id="name-container">
+                <div>Caste:</div>
+                <div id="caste"></div>
+            </div>
+            <div id="stats-container">
+                <div>Score: </div>
+                <div id="score"></div>
+                <div>Speed: </div>
+                <div id="speed"></div>
+                <div>Size: </div>
+                <div id="size"></div>
+            </div>
+        </div>
         <div id="gameboard"></div>
         <div id="game-over">GAME OVER</div>
     </div>

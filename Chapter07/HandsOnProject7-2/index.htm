@@ -6,8 +6,8 @@
       Chapter 7
       Hands-on Project 7-2
 
-      Author: 
-      Date:   
+      Author: Connor Moore
+      Date: March 3rd, 2020  
 
       Filename: index.htm
    -->
@@ -43,5 +43,50 @@
           </fieldset>
      </form>
    </article>
+   <script>
+
+      var selection = document.getElementById("dateSelected");
+      var result = document.getElementById("day");
+      var allDaysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"
+      , "Friday", "Saturday"];
+      var selectedDate;
+      var dayofWeekNumber;
+      var dayofWeekName;
+
+      function lookUpDay() {
+         selectedDate = new Date(selection.value);
+         selectedDate.setUTCHours(12);
+         dayOfWeekNumber = selectedDate.getUTCDay();
+         dayOfWeekName = allDaysOfWeek[dayOfWeekNumber];
+         result.innerHTML = dayOfWeekName;
+      }
+
+       // add event listener to find day and clear buttons on click
+       function createEventListener() {
+          var submitButton = document.getElementById("determineDay");
+          if (submitButton.addEventListener) {
+             
+             submitButton.addEventListener("click", lookUpDay, false);
+          } else if (submitButton.attachEvent) {
+             submitButton.attachEvent("onclick", lookUpDay);
+          }
+
+          // clears input/output boxes
+          document.getElementById("dateSelected").value = "";
+          document.getElementById("day").innerHTML = "";
+       }
+
+
+       // calls the "click" event listener for the determineDay id button
+          if (window.addEventListener) {
+            console.log("here");
+             window.addEventListener("load", createEventListener, false);
+          } else if (window.attachEvent) {
+             window.addEventListener("onload", createEventListener);
+          }
+       
+
+
+   </script>
 </body>
 </html>
