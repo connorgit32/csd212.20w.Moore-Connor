@@ -4,7 +4,7 @@ const DEFAULT_BLOCK_SIZE = 50         // Number of pixels per gameboard grid squ
 const DEFAULT_SNAKE_COLOR = '#721745'
 const INITIAL_SNAKE_SPEED = 5         // In grid blocks/sec
 
-let blockSize = DEFAULT_BLOCK_SIZE
+let blockSize
 
 /**
  * Returns the milliseconds per tick needed if the snake is moving at the given blocks/sec speed
@@ -55,7 +55,7 @@ class Board {
 
         // A collection of PlaceableObjects on the board. This will contain things like
         // Food and SnakeSegments, all of which are PlaceableObjects
-        this.objects = []                               
+        this.objects = []
     }
 
     /**
@@ -68,7 +68,7 @@ class Board {
         const h = window.innerHeight
 
         // Size the board so there is a left/right margin by subtracting 2 grid block sizes from the window width
-        const wpx = w - px(2, false);  
+        const wpx = w - px(2, false);
         // Size the board so there is a bottom margin by subtracting 1 grid block size from the window height
         // Also make room for the header element by removing its height (this.el.offsetTop) from the window height
         const hpx = h - this.el.offsetTop - px(1, false);
@@ -90,22 +90,20 @@ class Board {
      * Returns a random position on the gameboard
      */
     randomGridPosition() {
-        // TODO: Use the built-in Math object, the Point class, 
-        //       and the properties of this Board class to return 
-        //       a Point that is at a random location in the board
-        return new Point(Math.floor(Math.random()*this.gridWidth), Math.floor(Math.random()*this.gridHeight))
+
+        const x = Math.floor(Math.random() * this.gridWidth)
+        const y = Math.floor(Math.random() * this.gridHeight)
+
+        return new Point(x, y)
     }
 
     /**
      * Returns a Point in the middle of the board (to the nearest Point)
      */
     midPoint() {
-        // TODO: Use the built-in Math object, the Point class, 
-        //       and the properties of this Board class to return 
-        //       a Point that is in the middle of the board
-        // NOTE: Be sure that the point is on INTEGER coordinates, 
-        //       even if your board has odd-valued dimensions
-        return new Point(Math.floor(this.gridWidth / 2), Math.floor(this.gridHeight / 2))
+        const x = Math.floor(this.gridWidth/2)
+        const y = Math.floor(this.gridHeight/2)
+        return new Point(x, y)
     }
 
     /**
@@ -127,16 +125,16 @@ class Board {
 
     /**
      * This method achieves two things:
-     *  1) Adds the given to this board's objects collection
-     *  2) Adds a given object's DOM element to the gameboard DOM element
-     * 
-     * ASSUMPTIONS: 
+     *  1) Adds the given PlaceableObject to this board's objects collection
+     *  2) Adds a given PlaceableObject's DOM element to the gameboard DOM element
+     *
+     * ASSUMPTIONS:
      *  - obj has a method named 'addTo' that accepts a DOM element and
      *      adds to that element the 'el' property of some PlaceableObject
      *  - obj has a method named 'draw' that manipulates DOM properties
      *      such that it is drawn in its correct location on the board
-     * 
-     * @param obj The object to place on the gameboard
+     *
+     * @param {PlaceableObject} obj The object to place on the gameboard
      */
     add(obj) {
         this.objects.push(obj)
@@ -147,9 +145,7 @@ class Board {
      * Simply calls the draw() method of all PlaceableObjects on the board
      */
     draw() {
-        for ( let o of this.objects ) {
-            o.draw()
-        }
+        this.objects.forEach( o => o.draw() )
     }
 }
 
@@ -157,9 +153,9 @@ class Board {
  * Represents an object that may be placed on the game board.  Eg, Food, or SnakeSegment.
  * Each PlaceableObject has a gridPosition (an instance of Point) and an 'el' property
  * which is a reference to the DOM element represented by the PlaceableObject.
- * 
+ *
  * PlaceableObjects should only be 1x1 elements in the gameboard grid.  Thus, SnakeSegment
- * is a PlaceableObject, but Snake is NOT, even though Snake does share some methods with 
+ * is a PlaceableObject, but Snake is NOT, even though Snake does share some methods with
  * PlaceableObject.
  */
 class PlaceableObject {
@@ -187,7 +183,7 @@ class PlaceableObject {
 
     /**
      * Returns true if the given Point p is at the same location as this object
-     * @param p 
+     * @param p
      */
     isAtPoint(p) {
         return this.gridPosition.equals(p)
@@ -211,7 +207,7 @@ class PlaceableObject {
 }
 
 class Food extends PlaceableObject {
-    constructor(gridPosition) {    
+    constructor(gridPosition) {
         super(gridPosition)
 
         this.el = document.createElement('div')
@@ -244,7 +240,7 @@ class SnakeSegment extends PlaceableObject {
     get direction() { return this._direction }
     set direction(d) {
         // In addition to setting the _direction property, setting a segment's direction
-        // must also manipulate the segment el's classlist accordingly to one of 
+        // must also manipulate the segment el's classlist accordingly to one of
         // 'snake-dir-U', 'snake-dir-D', 'snake-dir-L', or 'snake-dir-R'
         // AND remove the previous dir-related class
         this.el.classList.remove('snake-dir-'+this._direction)
@@ -277,7 +273,149 @@ class SnakeSegment extends PlaceableObject {
                 return this.gridPosition
         }
     }
+}
 
+/**
+ * Represents a snake, which consists of a number of SnakeSegments
+ */
+class Snake {
+    constructor(color, position, dir) {
+        this.color = color
+
+        // Start a snake with just a single segment that will be the snake's head
+        // and (for now) its tail
+        const head = new SnakeSegment(color, position, dir, true, true)
+        this.head = head
+
+        // The snake's segments are stored in an array
+        this.segments = []
+        this.segments.push(head)
+
+        this.speed = INITIAL_SNAKE_SPEED
+        this.score = 0
+    }
+
+    // By default, a snake is "Sss'ish"
+    get caste() {
+        return "Sss'ish"
+    }
+
+    // The size of the snake is simply the number of segments it has
+    get size() {
+        return this.segments.length
+    }
+
+    // The head segment determines the snake's direction.
+    // See the slither() method for how the remaining segments follow the head
+    set direction(dir) {
+        this.head.direction = dir;
+    }
+
+    /**
+     * Adds the snake (ie, the DOM elements for each of its segments) to the given DOM element
+     * @param el The DOM element to which the snake's segments should be added
+     */
+    addTo(el) {
+        this.segments.forEach(s => s.addTo(el))
+    }
+
+    draw() {
+        this.segments.forEach(s => s.draw())
+    }
+
+    kill() {
+        this.segments.forEach( s => s.kill())
+    }
+
+    /**
+     * Add a new segment to the snake
+     */
+    grow() {
+        // First, get the old tail, and make sure it is no longer marked as the tail
+        const tail = this.segments[this.segments.length-1]
+        tail.untail()
+
+        // Then make a new segment which will become the new tail
+        const newTail = new SnakeSegment(this.color, tail.gridPosition, null, false, true);
+        this.segments.push(newTail)
+
+        return newTail
+    }
+
+    speedUp() {
+        this.speed *= 1.05
+    }
+
+    incrementScore() {
+        this.score += 10
+    }
+
+    /**
+     * Returns true if any of the snake's segments are at the same location as the give Point p
+     * @param p The Point to check
+     */
+    laysOnPoint(p) {
+        for ( const s of this.segments ) {
+            if ( s.isAtPoint(p) ) { return true; }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the snake's head segment is at the same location as the give PlaceableObject
+     * @param placeableObject The PlaceableObject to check
+     */
+    isHeadOn(placeableObject) {
+        return this.head.isAtSamePositionAs(placeableObject)
+    }
+
+    /**
+     * Returns the next position of the snake's head based on its currect direction
+     */
+    nextHeadPosition() {
+        return this.head.nextPosition()
+    }
+
+    /**
+     * Moves all the snake's segments in their current direction, and updates their directions
+     * such that the segments follow the head
+     */
+    slither() {
+        // nextDir will be the NEW direction of the segment being processed in each iteration of the loop below
+        let nextDir = this.head.direction
+        for ( let s of this.segments ) {
+            // Update the segment's position to its next position
+            s.gridPosition = s.nextPosition()
+
+            const oldDir = s.direction  // Remember its current direction so we can use it as the next nextDir
+            s.direction = nextDir       // Update the segment's direction to the nextDir (which was the previous segments direction)
+            nextDir = oldDir            // Finally, set up nextDir for the next iteration
+        }
+    }
+}
+
+// Since we extend the main Snake class, we ONLY need to specify the code
+// that makes each snake subclass unique!
+class HssishSnake extends Snake {
+    get caste() { return "Hss'ish" }
+
+    incrementScore() {
+        this.score += 12
+    }
+}
+class TssishSnake extends Snake {
+    get caste() { return "Tss'ish" }
+    speedUp() {
+        this.speed *= 1.01
+    }
+}
+class KssishSnake extends Snake {
+    get caste() { return "Kss'ish" }
+    grow() {
+        if ( Math.random() > 0.5 ) {
+            return super.grow()
+        }
+    }
 }
 
 /**
@@ -289,25 +427,61 @@ class SettingsPanel {
         // The method to call when the settings panel gets submitted
         this.submitCallback = onSubmit
 
+        // TODO: give the snake-color input a default value
+        document.getElementById('snake-color').value = DEFAULT_SNAKE_COLOR
+        // TODO: give the block-size input a default value
+        document.getElementById('block-size').value = DEFAULT_BLOCK_SIZE
         // NOTE the uses below of the bind() function to ensure that 'this' refers to the SettingsPanel
         // object and NOT the object that CALLED the handler function (which is the default in JavaScript)
 
         document.forms[0].addEventListener('submit', this.handleFormSubmit.bind(this));
 
+        document.getElementById('snake-caste').addEventListener('input', this.updateSnakeNamePlaceholder.bind(this))
+        // Call it once immediately to initialize the placeholder as soon as the panel loads
+        this.updateSnakeNamePlaceholder()
+
+        document.getElementById('block-size').addEventListener('input', this.updateBlockSizePreview.bind(this))
+        // Call it once immediately to initialize the preview as soon as the panel loads
+        this.updateBlockSizePreview()
+
+        // Form validation & assistive functions
+        document.getElementById('snake-name').addEventListener('input', this.stripInvalidChars.bind(this) )
+        document.getElementById('snake-name').addEventListener('input', this.formatName.bind(this))
+        document.getElementById('snake-name').addEventListener('input', this.detectCaste.bind(this))
+
+        document.getElementById('snake-name').addEventListener('input', this.validateName.bind(this))
+        document.getElementById('snake-caste').addEventListener('change', this.validateName.bind(this))
+        // Call it once immediately to initialize validation as soon as the panel loads
+        this.validateName()
     }
 
     get snakeCaste() {
         return document.getElementById('snake-caste').value
     }
 
+    // A getter for snakeColor
+    get snakeColor() {
+        return document.getElementById('snake-color').value
+    }
+
+    //  A getter for blockSize
+    get blockSize() {
+        return document.getElementById('block-size').value
+    }
+
+    // A getter for snakeName
+    get snakeName() {
+        return document.getElementById('snake-name').value
+    }
+
     hide() {
         document.getElementById('settings-panel').classList.remove('open');
     }
-    
+
     show() {
         document.getElementById('settings-panel').classList.add('open');
     }
-    
+
     handleFormSubmit(event) {
 
         this.hide()
@@ -320,8 +494,119 @@ class SettingsPanel {
         event.preventDefault()
     }
 
-}
+    updateSnakeNamePlaceholder() {
+        // Updates #snake-name placeholder to give a valid example of a name for the chosen caste
+        var caste = document.getElementById('snake-caste').value
 
+        if (caste === "s") {
+            document.getElementById('snake-name').placeholder = "SsSss -< --< SssS"
+        }
+        if (caste === "h") {
+            document.getElementById('snake-name').placeholder = "Hssss ---< HsSsS"
+        }
+        if (caste === "t") {
+            document.getElementById('snake-name').placeholder = "TsSs -< --<"
+        }
+        if (caste === "k") {
+            document.getElementById('snake-name').placeholder = "KsSss ---< -< KssS"
+        }
+
+    }
+
+    updateBlockSizePreview() {
+        //Update the #block-size-preview element to be the block size picked by the user
+        document.getElementById('block-size-preview').style.width = this.blockSize + "px"
+        document.getElementById('block-size-preview').style.height = this.blockSize + "px"
+    }
+
+    stripInvalidChars() {
+        // Strips invalid characters from the snake name string
+        //var name = document.getElementById('snake-name').value.split();
+        var name = document.getElementById('snake-name').value
+        var caste = document.getElementById('snake-caste').value
+
+
+        //Prevents characters than the ones below from being input after the first character.
+        for (var i = 0; i < name.length -1; i++ ){
+            // checks if string ends with allowed character
+            if (!name.endsWith('S') && !name.endsWith('s') && !name.endsWith('H') && !name.endsWith('h')
+            && !name.endsWith('K') && !name.endsWith('k') && !name.endsWith('T') && !name.endsWith('t')
+            && !name.endsWith(' ') && !name.endsWith('-') && !name.endsWith('<')) { 
+                // removes last character of string if it's not equal to an allowed character
+                document.getElementById('snake-name').value = name.substring(0,name.length-1)
+            }
+        }
+
+
+    }
+
+
+
+    formatName() {
+        // Automatically uppercase any letter that comes after a space or apostrophe
+        var name = document.getElementById('snake-name').value;
+
+        // Group together anyword, then replace it's first character with an uppercase
+        document.getElementById('snake-name').value = name.replace(/\b\w/g, name.charAt(0).toUpperCase())
+        
+        
+    }
+
+    detectCaste() {
+        // Automatically select the snake caste based on the name entered by the user
+        var firstChar = document.getElementById('snake-name').value.charAt(0)
+
+        if (firstChar === 'S') {
+            document.getElementById('snake-caste').value = 's'
+        }
+        if (firstChar === 'H') {
+            document.getElementById('snake-caste').value = 'h'
+        }
+        if (firstChar === 'T') {
+            document.getElementById('snake-caste').value = 't'
+        }
+        if (firstChar === 'K') {
+            document.getElementById('snake-caste').value = 'k'
+        }
+    
+    }
+
+    validateName() {
+        // Set custom validity messages for invalid snake names
+        var name = document.getElementById('snake-name').value
+        var caste = document.getElementById('snake-caste').value
+        var input = document.querySelector('input')
+        
+        // resets custom validity when input changes
+        input.setCustomValidity("")
+
+    
+
+        if (caste === "s") {
+            if (/^Ss+s( (ss+s|-+<))*$/gi.test(name) == false) {
+                input.setCustomValidity("Must begin with 'S' followed by 2 or more s's, seperated by a single space. Tounge flicks must contain one or more -'s with a < at the end.")
+            } 
+        }
+        if (caste === "h") {
+            if (/^Hs+s( (Hs+s|-+<))*$/gi.test(name) == false) {
+                input.setCustomValidity("Must begin with 'H' followed by 2 or more s's, seperated by a single space. Tounge flicks must contain one or more -'s with a < at the end.")
+            } 
+        }
+        if (caste === "t") {
+            if (/^Ts+s( (Ts+s|-+<))*$/gi.test(name) == false) {
+                input.setCustomValidity("Must begin with 'T' followed by 2 or more s's, seperated by a single space. Tounge flicks must contain one or more -'s with a < at the end.")
+            } 
+        }
+        if (caste === "k") {
+            if (/^Ks+s( (Ks+s|-+<))*$/gi.test(name) == false) {
+                input.setCustomValidity("Must begin with 'K' followed by 2 or more s's, seperated by a single space. Tounge flicks must contain one or more -'s with a < at the end.")
+            } 
+        }
+            
+
+        }
+
+}
 /**
  * Represents the snake game as a whole.  This is the main class of this app, which holds a
  * reference to the other main objects (board, snake, settings panel, etc) and coordinates their behaviour.
@@ -359,16 +644,24 @@ class Game {
     }
 
     updateGameInfo() {
+        document.getElementById('caste').innerText = this.snake.caste
+        document.getElementById('size').innerText = this.snake.size
         document.getElementById('score').innerText = this.snake.score;
         document.getElementById('speed').innerText = Math.round(this.snake.speed*100)/100
-        document.getElementById('size').innerText = this.snake.segArraySize
-        document.getElementById('caste').innerText = this.snake.caste
+        // TODO: set the name to be the name picked by the user in the Settings Panel
+        document.getElementById('name').innerText = this.settingsPanel.snakeName
     }
 
     // This is the handler that we passed in to the SettingsPanel.  It gets called when the Start button
-    // gets clicked.  Here we set the block size and start the game.  See also Game.constructor and 
+    // gets clicked.  Here we set the block size and start the game.  See also Game.constructor and
     // SettingsPanel.handleFormSubmit above
     settingsSubmitted() {
+
+        // blockSize is our one global variable now
+        // TODO: use the block size picked by the user in the Settings Panel
+       // blockSize = DEFAULT_BLOCK_SIZE
+        blockSize = this.settingsPanel.blockSize;
+
         this.restart()
     }
 
@@ -379,40 +672,38 @@ class Game {
         // Make a new board
         this.board = new Board()
 
-        // Pick a position in the middle of the game board
+        // Get a random initial direction
+        const dir = "UDLR"[Math.floor(Math.random()*4)]
+
+        // Use the color picked by the user in the Settings Panel
+        const color = this.settingsPanel.snakeColor;
+
         const position = this.board.midPoint()
 
-        // Pick a random initial direction
-        const dirOptions = "UDLR"
-        const dir = dirOptions[Math.floor(Math.random()*dirOptions.length)]
-
-        const color = DEFAULT_SNAKE_COLOR
-        
-
-        // Make your own 'Snake' class that will allow the snake to grow
-        if (this.settingsPanel.snakeCaste === 's') {
-            this.snake = new Snake(color, position, dir, true, true)
-        }
-        else if (this.settingsPanel.snakeCaste === 'h') {
-            this.snake = new HssishSnake(color, position, dir, true, true)
-        }
-        else if (this.settingsPanel.snakeCaste === 't') {
-            this.snake = new TssishSnake(color, position, dir, true, true)
-        }
-        else if (this.settingsPanel.snakeCaste === 'k') {
-            this.snake = new KssishSnake(color, position, dir, true, true)
+        // Create the appropriate snake object based on the caste chosen by the user
+        switch ( this.settingsPanel.snakeCaste ) {
+            case "h":
+                this.snake = new HssishSnake(color, position, dir)
+                break
+            case "k":
+                this.snake = new KssishSnake(color, position, dir)
+                break
+            case "s":
+                this.snake = new Snake(color, position, dir)
+                break
+            case "t":
+                this.snake = new TssishSnake(color, position, dir)
+                break
         }
 
         this.board.add(this.snake)
 
         // Create a new food at a random location
-        // place the food in random locations
-        const foodPosition = this.board.randomGridPosition()
-        this.food = new Food(foodPosition)
+        this.food = new Food(this.board.randomGridPosition())
         this.board.add(this.food)
 
         this.board.draw()
-        
+
         this.hideGameover()
 
         this.state = 'running'
@@ -426,21 +717,21 @@ class Game {
      * value using the msPerTick function above.
      */
     tick() {
-        // Since we could get here from a keypress (see Game.handleKeypress) we need to clear any existing 
+        // Since we could get here from a keypress (see Game.handleKeypress) we need to clear any existing
         // timers before updating the game
         clearTimeout(this.timeoutId)
         this.update()
 
         // If manualTick is enabled, then there's nothing more to do.  User keypresses will be the only
         // thing that causes the game to 'tick' forward
-        if ( ! this.manualTick ) { 
+        if ( ! this.manualTick ) {
             // Otherwise, we set a timer so that the next tick will occur according to the snake's speed
             // whether or not the user presses a key
-            this.timeoutId = setTimeout(() => { 
+            this.timeoutId = setTimeout(() => {
                 // Only call a new tick if the game is not over
-                if ( this.state === 'running' ) { 
+                if ( this.state === 'running' ) {
                     this.tick()
-                } 
+                }
             }, msPerTick(this.snake.speed))
         }
     }
@@ -450,13 +741,13 @@ class Game {
      */
     isGameOver() {
 
-        // Creates parameter for the next position of the snakes head
         const nextHeadPosition = this.snake.nextHeadPosition()
+
         // Game is over if either the next head position is outside the board...
-        // Check whether the snake collides with itself
-        return ! this.board.isPointInside(nextHeadPosition) || this.snake.laysOnPoint(nextHeadPosition)
-        
-     
+        return ! this.board.isPointInside(nextHeadPosition)
+            || // ... or ...
+            // The next position is the same as another segment's
+            this.snake.laysOnPoint(nextHeadPosition)
     }
 
     /**
@@ -464,35 +755,36 @@ class Game {
      */
     update() {
 
-        if ( this.isGameOver() ) { 
+        if ( this.isGameOver() ) {
             this.showGameover()
             this.snake.kill()
             this.state = 'over'
         } else {
 
-            // TODO: refactor this line to use the correct method on your new Snake class
-            //this.snake.gridPosition = this.snake.nextHeadPosition()
             this.snake.slither()
 
-            // TODO: refactor this line to use the correct method on your new Snake class
             if ( this.snake.isHeadOn(this.food) ) {
 
-                
+                // We use function calls here instead of setting the properties directly
+                // so that we can make use of polymorphism in the Snake classes.
+                // We can call the functions and each caste of snake will automatically make
+                // the appropriate adjustments according to its caste
                 this.snake.incrementScore()
-               
                 this.snake.speedUp()
 
-                this.var = this.snake.grow()
-                if (this.var != null) {
-                    this.board.add(this.var)
+                const newSegment = this.snake.grow()
+                // Because some snake types may or may not grow, we need to check to make sure
+                // we actually did get a new segment from the grow function before attempting to add id
+                // (otherwise a run-time error would occur because newSegment would be null)
+                if ( newSegment ) {
+                    this.board.add(newSegment)
                 }
 
                 // The current food has been eaten! Remove it and make a new one at a random location
                 this.food.remove()
-                const foodPosition = this.board.randomGridPosition()
-                this.food = new Food(foodPosition)
+                this.food = new Food(this.board.randomGridPosition())
                 this.board.add(this.food)
-            } 
+            }
 
             this.board.draw()
 
@@ -529,156 +821,6 @@ class Game {
     }
 
 }
-
-class Snake {
-    constructor(color, position, direction) {
-        
-        this.color = color
-
-        this.score = 0
-
-        this.speed = INITIAL_SNAKE_SPEED
-
-        this.head = new SnakeSegment(color, position, direction, true, true)
-
-        //let snakeArr = [this.head]
-        //this.segments = snakeArr
-
-        //this.segments = [this.head]
-
-        //this.direction = Snake.direction
-
-        this.segments = []
-        this.segments.push(this.head)
-    }
-
-    addTo(el) {
-        for (let i = 0; i < this.segments.length; i++) {
-            this.segments[i].addTo(el)
-        }
-    }
-
-    draw(el) {
-        for (let i = 0; i < this.segments.length; i++) {
-            this.segments[i].draw(el)
-        }
-    }
-
-
-    // need PlaceableObject. here?
-    kill() {
-        for (let i = 0; i < this.segments.length; i++) {
-            this.segments[i].kill()
-        }
-    }
-
-    /**
-     * @param {string} dir
-     */
-    set direction(dir) {
-        this.head.direction = dir
-    }
-    get segArraySize(){
-        return this.segments.length
-    }
-
-    get caste() {
-            return "Sss'ish"
-    }
-
-    nextHeadPosition() {
-        return this.head.nextPosition()
-    }
-
-    isHeadOn(placeableObject) {
-        return this.head.isAtSamePositionAs(placeableObject)
-    }
-
-    slither() {
-        this.nextDir = this.head.direction
-        for (let i = 0; i < this.segments.length; i++) {
-            this.segments[i].gridPosition = this.segments[i].nextPosition()
-            this.dirForNextSegment = this.segments[i].direction // current segments direction 
-            this.segments[i].direction = this.nextDir // segments direction is direction of segment infront of it
-            this.nextDir = this.dirForNextSegment // equals current segments direction to be used by next one
-        }
-    }
-    
-    grow() {
-        
-        this.segments[this.segments.length - 1].untail()
-        this.newSnakeSeg = new SnakeSegment(this.color, this.segments[this.segments.length - 1].gridPosition, null, false, true )
-        this.segments.push(this.newSnakeSeg)
-        return this.newSnakeSeg
-    }
-
-    laysOnPoint(p) {
-        for (let i = 0; i < this.segments.length; i++) {
-            if (this.segments[i].isAtPoint(p)) {
-                return true
-            } 
-        }
-        return false
-    }
-
-    speedUp() {
-        this.speed *= 1.05
-    }
-
-    incrementScore() {
-        this.score += 10
-    }
-
-}
-   //color, position, direction                                              
-class HssishSnake extends Snake {
-        get caste() {
-            //super.caste()
-            return "Hss'ish"
-        }
-
-        incrementScore() {
-            this.score += 12
-        }
-    
-}
-class TssishSnake extends Snake {
-    
-        get caste() {
-            return "Tss'ish"
-        }
-
-        speedUp() {
-            this.speed *= 1.01
-        }
-
-}
-
-class KssishSnake extends Snake {
-    
-        get caste() {
-            return "Kss'ish"
-        }
-    
-        grow() {
-            console.log(Math.floor(Math.random()*2))
-            if (Math.floor(Math.random()*2) === 1) {
-                //super.grow() // Doesn't work? Seems like it should... had to copy whole grow() into here.
-                this.segments[this.segments.length - 1].untail()
-                this.newSnakeSeg = new SnakeSegment(this.color, this.segments[this.segments.length - 1].gridPosition, null, false, true )
-                this.segments.push(this.newSnakeSeg)
-                return this.newSnakeSeg
-            } else {
-                return null
-            }
-        }
-
-}
-
-
-
-
-
 
 // This is where it all begins!
 window.addEventListener('load', function() {

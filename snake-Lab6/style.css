@@ -80,7 +80,6 @@ body {
 #settings-panel form section {
     display: grid;
     grid-template-columns: 2fr 3fr;
-    grid-column-gap: 1em;
     align-items: center;
 
 
@@ -88,15 +87,10 @@ body {
     margin-bottom: 2em;
 }
 
-#block-size-container {
-    height: 60px;
-    display: flex;
-    align-items: center;
+#settings-panel form #player-settings {
+
 }
-#block-size-preview {
-    display: inline-block;
-    background-color: #175059;
-}
+
 
 #gameboard { 
     box-sizing: content-box;
