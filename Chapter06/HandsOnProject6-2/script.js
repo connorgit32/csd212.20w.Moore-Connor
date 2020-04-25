@@ -99,7 +99,7 @@ function zeroPlaceholder() {
     addressBox.style.color = "black";
 
     if (addressBox.value === addressBox.placeholder) {
-        addressBox.value === ""; 
+        addressBox.value = ""; 
     }
 }
 
@@ -120,7 +120,7 @@ function generatePlaceholder() {
         addressBox.style.color = "rgb(178,184,183)";
         if (addressBox.addEventListener) {
             addressBox.addEventListener("focus", zeroPlaceholder, false);
-            addressBox.addEventListener("blur", checkPlaceHolder, false);
+            addressBox.addEventListener("blur", checkPlaceholder, false);
         } else if (addressBox.attachEvent) {
             addressBox.attachEvent("onfocus", zeroPlaceholder);
             addressBox.attachEvent("onblur", checkPlaceholder);

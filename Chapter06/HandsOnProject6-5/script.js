@@ -6,6 +6,8 @@ April 20th, 2020
 
 "use strict";
 
+var formValidity = true;
+
 /* remove default value and formatting from selection list */
 function removeSelectDefault() {
     var selectBox = document.getElementById("size");
