@@ -529,6 +529,8 @@ class SettingsPanel {
         //Prevents characters than the ones below from being input after the first character.
         for (var i = 0; i < name.length -1; i++ ){
             // checks if string ends with allowed character
+            // What's the point of looping through each character if you're just checking the last character every time?
+            // What you have here doesn't prevent someone form insert invalid characters by placing the cursor in the middle of the name
             if (!name.endsWith('S') && !name.endsWith('s') && !name.endsWith('H') && !name.endsWith('h')
             && !name.endsWith('K') && !name.endsWith('k') && !name.endsWith('T') && !name.endsWith('t')
             && !name.endsWith(' ') && !name.endsWith('-') && !name.endsWith('<')) { 
